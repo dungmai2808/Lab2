@@ -51,7 +51,7 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_TIM2_Init(void);
 /* USER CODE BEGIN PFP */
-
+void display7SEG(int num);
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -95,12 +95,42 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   setTimer1(100);
+  setTimer2(50);
+
+  // Xóa màn hình
+  GPIOB->ODR = 0xFF;
+
+  int seg_ord = 1;
   while (1)
   {
 	  if(timer1_flag == 1) {
 		  setTimer1(100);
 		  // TODO
 		  HAL_GPIO_TogglePin(LED_RED_GPIO_Port, LED_RED_Pin);
+	  }
+	  if(timer2_flag == 1) {
+		  setTimer2(50);
+		  // TODO
+		  switch(seg_ord) {
+		  	  case 1:
+		  		  display7SEG(1);
+		  		  HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+		  		  HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+		  		  seg_ord = 2;
+		  		  break;
+		  	  case 2:
+		  		  display7SEG(2);
+		  		  HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, SET);
+		  		  HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, RESET);
+		  		  seg_ord = 1;
+		  		  break;
+		  	  default:
+		  		  display7SEG(1);
+		  		  HAL_GPIO_WritePin(EN0_GPIO_Port, EN0_Pin, RESET);
+		  		  HAL_GPIO_WritePin(EN1_GPIO_Port, EN1_Pin, SET);
+		  		  seg_ord = 2;
+		  		  break;
+		  }
 	  }
     /* USER CODE END WHILE */
 
@@ -202,22 +232,60 @@ static void MX_GPIO_Init(void)
 
   /* GPIO Ports Clock Enable */
   __HAL_RCC_GPIOA_CLK_ENABLE();
+  __HAL_RCC_GPIOB_CLK_ENABLE();
 
   /*Configure GPIO pin Output Level */
-  HAL_GPIO_WritePin(LED_RED_GPIO_Port, LED_RED_Pin, GPIO_PIN_RESET);
+  HAL_GPIO_WritePin(GPIOA, LED_RED_Pin|EN0_Pin|EN1_Pin, GPIO_PIN_RESET);
 
-  /*Configure GPIO pin : LED_RED_Pin */
-  GPIO_InitStruct.Pin = LED_RED_Pin;
+  /*Configure GPIO pin Output Level */
+  HAL_GPIO_WritePin(GPIOB, SEG0_Pin|SEG1_Pin|SEG2_Pin|SEG3_Pin
+                          |SEG4_Pin|SEG5_Pin|SEG6_Pin, GPIO_PIN_RESET);
+
+  /*Configure GPIO pins : LED_RED_Pin EN0_Pin EN1_Pin */
+  GPIO_InitStruct.Pin = LED_RED_Pin|EN0_Pin|EN1_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
   GPIO_InitStruct.Pull = GPIO_NOPULL;
   GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(LED_RED_GPIO_Port, &GPIO_InitStruct);
+  HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+  /*Configure GPIO pins : SEG0_Pin SEG1_Pin SEG2_Pin SEG3_Pin
+                           SEG4_Pin SEG5_Pin SEG6_Pin */
+  GPIO_InitStruct.Pin = SEG0_Pin|SEG1_Pin|SEG2_Pin|SEG3_Pin
+                          |SEG4_Pin|SEG5_Pin|SEG6_Pin;
+  GPIO_InitStruct.Mode = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
 }
 
 /* USER CODE BEGIN 4 */
 void HAL_TIM_PeriodElapsedCallback ( TIM_HandleTypeDef * htim ) {
 	timerRun();
+}
+
+void display7SEG(int num) {
+    // Mảng biểu diễn số từ 0 đến 9 trên màn hình LED 7 đoạn
+    uint8_t numbers[10] = {
+        0b00111111, // 0
+        0b00000110, // 1
+        0b01011011, // 2
+        0b01001111, // 3
+        0b01100110, // 4
+        0b01101101, // 5
+        0b01111101, // 6
+        0b00000111, // 7
+        0b01111111, // 8
+        0b01101111, // 9
+    };
+
+    // Xóa màn hình
+    GPIOB->ODR = 0xFF;
+
+    // Hiển thị số trên màn hình LED 7 đoạn
+    if (num >= 0 && num <= 9) {
+        GPIOB->ODR = ~numbers[num];
+    }
 }
 /* USER CODE END 4 */
 
