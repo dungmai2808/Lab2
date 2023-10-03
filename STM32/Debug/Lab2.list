@@ -119,8 +119,8 @@ int main(void)
   setTimer1(100);
  8000166:	2064      	movs	r0, #100	; 0x64
  8000168:	f000 f9fc 	bl	8000564 <setTimer1>
-  setTimer2(50);
- 800016c:	2032      	movs	r0, #50	; 0x32
+  setTimer2(100);
+ 800016c:	2064      	movs	r0, #100	; 0x64
  800016e:	f000 fa0d 	bl	800058c <setTimer2>
 
   // Xóa màn hình
@@ -153,8 +153,8 @@ int main(void)
  8000198:	681b      	ldr	r3, [r3, #0]
  800019a:	2b01      	cmp	r3, #1
  800019c:	d1ec      	bne.n	8000178 <main+0x2c>
-		  setTimer2(50);
- 800019e:	2032      	movs	r0, #50	; 0x32
+		  setTimer2(100);
+ 800019e:	2064      	movs	r0, #100	; 0x64
  80001a0:	f000 f9f4 	bl	800058c <setTimer2>
 		  // TODO
 		  update7SEG((index_led++) % MAX_LED);
