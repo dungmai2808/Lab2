@@ -54,9 +54,11 @@ static void MX_TIM2_Init(void);
 const int MAX_LED = 4;
 int index_led = 0;
 int led_buffer[4] = {1 , 2 , 3 , 4};
+int hour = 15, minute = 59, second = 50;
 
 void update7SEG (int index);
 void display7SEG(int num);
+void updateClockBuffer();
 /* USER CODE END PFP */
 
 /* Private user code ---------------------------------------------------------*/
@@ -115,6 +117,19 @@ int main(void)
 	  if(timer2_flag == 1) {
 		  setTimer2(100);
 		  // TODO
+		  second++;
+		  if(second >= 60) {
+			  second = 0;
+			  minute++;
+		  }
+		  if(minute >= 60) {
+			  minute = 0;
+			  hour++;
+		  }
+		  if(hour >= 24) {
+			  hour = 0;
+		  }
+		  updateClockBuffer();
 		  update7SEG((index_led++) % MAX_LED);
 	  }
     /* USER CODE END WHILE */
@@ -314,6 +329,13 @@ void update7SEG (int index) {
 			HAL_GPIO_WritePin(EN3_GPIO_Port, EN3_Pin, SET);
 			break;
 	}
+}
+
+void updateClockBuffer() {
+	led_buffer[0] = hour / 10;
+	led_buffer[1] = hour % 10;
+	led_buffer[2] = minute / 10;
+	led_buffer[3] = minute % 10;
 }
 /* USER CODE END 4 */
 
