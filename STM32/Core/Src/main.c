@@ -100,7 +100,7 @@ int main(void)
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   setTimer1(100);
-  setTimer2(100);
+  setTimer2(50);  // 25 for Ex4
 
   // Xóa màn hình
   GPIOB->ODR = 0xFF;
@@ -113,9 +113,10 @@ int main(void)
 		  HAL_GPIO_TogglePin(DOT_GPIO_Port, DOT_Pin);
 	  }
 	  if(timer2_flag == 1) {
-		  setTimer2(100);
+		  setTimer2(50);  // 25 for Ex4
 		  // TODO
-		  update7SEG((index_led++) % MAX_LED);
+		  index_led = (index_led + 1) % MAX_LED;
+		  update7SEG(index_led);
 	  }
     /* USER CODE END WHILE */
 
