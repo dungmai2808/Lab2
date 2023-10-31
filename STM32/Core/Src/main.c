@@ -101,6 +101,9 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+  // Ex5 + Ex7 + Ex8
+
   setTimer1(100);
   setTimer2(100);
 
